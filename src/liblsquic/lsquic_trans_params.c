@@ -101,6 +101,7 @@ lsquic_tp_encode (const struct transport_params *params,
     uint16_t u16;
     enum transport_param_id tpi;
     unsigned bits[MAX_TPI + 1];
+    unsigned bits_min_ack_del;
 
     if (params->tp_flags & TRAPA_SERVER)
     {
@@ -141,6 +142,12 @@ lsquic_tp_encode (const struct transport_params *params,
         need += 4 + 0;
     else if (params->tp_flags & TRAPA_QL_BITS)
         need += 4 + 1;
+
+    if (params->tp_min_ack_delay)
+    {
+        bits_min_ack_del = vint_val2bits(params->tp_min_ack_delay);
+        need += 4 + (1 << bits_min_ack_del);
+    }
 
     if (need > bufsz || need > UINT16_MAX)
     {
@@ -271,6 +278,15 @@ lsquic_tp_encode (const struct transport_params *params,
         WRITE_UINT_TO_P(TPI_QL_BITS, 16);
         WRITE_UINT_TO_P(1, 16);
         *p++ = !!params->tp_loss_bits;
+    }
+
+    if (params->tp_min_ack_delay)
+    {
+        WRITE_UINT_TO_P(TPI_MIN_ACK_DELAY, 16);
+        WRITE_UINT_TO_P(1 << bits_min_ack_del, 16);
+        vint_write(p, params->tp_min_ack_delay, bits_min_ack_del,
+                                                        1 << bits_min_ack_del);
+        p += 1 << bits_min_ack_del;
     }
 
 #if LSQUIC_TEST_QUANTUM_READINESS
@@ -500,6 +516,32 @@ lsquic_tp_decode (const unsigned char *const buf, size_t bufsz,
                     return -1;
                 }
                 break;
+            case TPI_MIN_ACK_DELAY:
+                switch (len)
+                {
+                case 1:
+                case 2:
+                case 4:
+                case 8:
+                    s = vint_read(p, p + len, &tmp64);
+                    if (s != len)
+                    {
+                        LSQ_DEBUG("cannot read the value of numeric transport "
+                                    "param min_ack_delay of length %u", len);
+                        return -1;
+                    }
+                    if (tmp64 == 0 || tmp64 > (1u << 24))
+                    {
+                        LSQ_DEBUG("unexpected value of min_ack_delay TP: "
+                                                            "%"PRIu64, tmp64);
+                        return -1;
+                    }
+                    params->tp_min_ack_delay = tmp64;
+                    break;
+                default:
+                    return -1;
+                }
+                break;
             }
             p += len;
         }
@@ -507,6 +549,15 @@ lsquic_tp_decode (const unsigned char *const buf, size_t bufsz,
 
     if (p != end)
         return -1;
+
+    if (params->tp_min_ack_delay
+            && params->tp_min_ack_delay > params->tp_max_ack_delay * 1000)
+    {
+        LSQ_DEBUG("min_ack_delay (%"PRIu64" usec) is larger than "
+            "max_ack_delay (%"PRIu64" ms)", params->tp_min_ack_delay,
+            params->tp_max_ack_delay);
+        return -1;
+    }
 
     return (int) (end - buf);
 #undef EXPECT_LEN
@@ -589,6 +640,14 @@ lsquic_tp_to_str (const struct transport_params *params, char *buf, size_t sz)
     {
         nw = snprintf(buf, end - buf, "; QL loss bits: %hhu",
                                                     params->tp_loss_bits);
+        buf += nw;
+        if (buf >= end)
+            return;
+    }
+    if (params->tp_min_ack_delay)
+    {
+        nw = snprintf(buf, end - buf, "; min_ack_delay: %"PRIu64" usec",
+                                                    params->tp_min_ack_delay);
         buf += nw;
         if (buf >= end)
             return;

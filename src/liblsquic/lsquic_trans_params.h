@@ -62,6 +62,7 @@ enum trapa_flags
     TRAPA_QL_BITS_OLD   = 1 << 7,   /* Send old-school boolean loss_bits TP.
                                      * Not set on decoded transport parameters.
                                      */
+#define TPI_MIN_ACK_DELAY 0xDE1A
 };
 
 struct transport_params
@@ -96,6 +97,7 @@ struct transport_params
 #define tp_max_ack_delay tp_numerics_u.s.max_ack_delay
 #define tp_active_connection_id_limit tp_numerics_u.s.active_connection_id_limit
 
+    uint64_t        tp_min_ack_delay;   /* In microseconds */
     unsigned char   tp_loss_bits;   /* Valid values 0, 1.  Set if TRAPA_QL_BITS is set. */
     signed char tp_disable_active_migration;
     uint8_t     tp_stateless_reset_token[IQUIC_SRESET_TOKEN_SZ];
