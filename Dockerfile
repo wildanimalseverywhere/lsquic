@@ -6,7 +6,7 @@ RUN apt-get update && \
 
 RUN apt-get install -y iperf 
 RUN apt-get install -y ufw
-RUN ufw default allow in
+RUN ufw allow
 RUN ufw enable
 RUN ufw status verbose
 
