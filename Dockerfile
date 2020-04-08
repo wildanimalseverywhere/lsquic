@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:bionic
 
 RUN apt-get update && \
     apt-get install -y build-essential git cmake software-properties-common \
@@ -10,6 +10,9 @@ RUN add-apt-repository ppa:gophers/archive && \
     cp /usr/lib/go-1.9/bin/go* /usr/bin/.
 
 RUN apt-get install -y iperf 
+RUN apt-get install -y net-tools
+RUN apt-get install -y iproute2 
+RUN apt-get install -y iputils-ping
 
 RUN uname -r
 
