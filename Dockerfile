@@ -10,18 +10,6 @@ RUN add-apt-repository ppa:gophers/archive && \
     cp /usr/lib/go-1.9/bin/go* /usr/bin/.
 
 RUN uname -r
-RUN sysctl net.ipv4.tcp_available_congestion_control
-RUN cd /tmp/
-RUN wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.13/linux-headers-5.4.13-050413_5.4.13-050413.202001171431_all.deb
-RUN wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.13/linux-headers-5.4.13-050413-generic_5.4.13-050413.202001171431_amd64.deb
-RUN wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.13/linux-headers-5.4.13-050413-lowlatency_5.4.13-050413.202001171431_amd64.deb
-RUN wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.13/linux-image-unsigned-5.4.13-050413-generic_5.4.13-050413.202001171431_amd64.deb
-RUN wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.13/linux-image-unsigned-5.4.13-050413-lowlatency_5.4.13-050413.202001171431_amd64.deb
-RUN wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.13/linux-modules-5.4.13-050413-generic_5.4.13-050413.202001171431_amd64.deb
-RUN wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v5.4.13/linux-modules-5.4.13-050413-lowlatency_5.4.13-050413.202001171431_amd64.deb
-RUN dpkg -i *.deb
-RUN reboot
-RUN sysctl net.ipv4.tcp_available_congestion_control
 
 RUN mkdir /src
 WORKDIR /src
