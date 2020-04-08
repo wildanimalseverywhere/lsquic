@@ -1,13 +1,14 @@
 FROM ubuntu:18.04
 
+RUN apt-get update && \
+    apt-get install -y build-essential git cmake software-properties-common \
+                       zlib1g-dev libevent-dev
+
 RUN apt-get install -y iperf 
 RUN apt-get install -y ufw
 RUN ufw default allow in
 RUN ufw enable
 RUN ufw status verbose
-RUN apt-get update && \
-    apt-get install -y build-essential git cmake software-properties-common \
-                       zlib1g-dev libevent-dev
 
 RUN add-apt-repository ppa:gophers/archive && \
     apt-get update && \
