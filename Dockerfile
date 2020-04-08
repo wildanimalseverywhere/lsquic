@@ -6,8 +6,8 @@ RUN apt-get update && \
 
 RUN apt-get install -y iperf 
 RUN apt-get install -y ufw
-RUN ufw disable
-RUN ufw status verbose
+RUN sudo ufw disable
+RUN sudo ufw status verbose
 
 RUN add-apt-repository ppa:gophers/archive && \
     apt-get update && \
