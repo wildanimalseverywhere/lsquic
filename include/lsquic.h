@@ -338,7 +338,7 @@ typedef struct ssl_ctx_st * (*lsquic_lookup_cert_f)(
 #define LSQUIC_DF_TIMESTAMPS 1
 
 /* 1: Cubic; 2: BBR */
-#define LSQUIC_DF_CC_ALGO 1
+#define LSQUIC_DF_CC_ALGO 2
 
 /** By default, incoming packet size is not limited. */
 #define LSQUIC_DF_MAX_PACKET_SIZE_RX 0
