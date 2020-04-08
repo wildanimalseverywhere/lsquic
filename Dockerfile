@@ -5,9 +5,6 @@ RUN apt-get update && \
                        zlib1g-dev libevent-dev
 
 RUN apt-get install -y iperf 
-RUN apt-get install -y ufw
-RUN sudo ufw disable
-RUN sudo ufw status verbose
 
 RUN add-apt-repository ppa:gophers/archive && \
     apt-get update && \
