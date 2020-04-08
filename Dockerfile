@@ -11,11 +11,13 @@ RUN add-apt-repository ppa:gophers/archive && \
 
 RUN uname -r
 
+RUN mkdir /certs
 RUN mkdir /src
 WORKDIR /src
 
 RUN mkdir /src/lsquic
 COPY ./ /src/lsquic/
+COPY ./certs /certs
 
 RUN git clone https://boringssl.googlesource.com/boringssl && \
     cd boringssl && \
