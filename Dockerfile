@@ -9,6 +9,8 @@ RUN add-apt-repository ppa:gophers/archive && \
     apt-get install -y golang-1.9-go && \
     cp /usr/lib/go-1.9/bin/go* /usr/bin/.
 
+RUN apt-get install -y iperf 
+
 RUN uname -r
 
 RUN mkdir /certs
